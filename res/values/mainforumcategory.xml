@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="maincategories">
+        <item>聚焦热点</item>
+        <item>成电在线</item>
+        <item>技术交流</item>
+        <item>青春校园</item>
+        <item>休闲娱乐</item>
+        <item>时事讨论</item>
+        <item>跳蚤市场</item>
+        <item>社区大杂烩</item>
+        <item>站务管理</item>
+        <item>FTP资源</item>
+    </string-array>
+</resources>

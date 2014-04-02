@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/head_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/newest_reply"
+            android:layout_width="@dimen/main_forum_head_image_width"
+            android:layout_height="@dimen/main_forum_head_image_height"
+            android:layout_weight="1"
+            android:src="@drawable/newestreply" />
+
+        <ImageView
+            android:id="@+id/newest_publish"
+            android:layout_width="@dimen/main_forum_head_image_width"
+            android:layout_height="@dimen/main_forum_head_image_height"
+            android:layout_weight="1"
+            android:src="@drawable/newestpublish" />
+
+        <ImageView
+            android:id="@+id/today_hot"
+            android:layout_width="@dimen/main_forum_head_image_width"
+            android:layout_height="@dimen/main_forum_head_image_height"
+            android:layout_weight="1"
+            android:src="@drawable/todayhot" />
+
+        <ImageView
+            android:id="@+id/account_manage"
+            android:layout_width="@dimen/main_forum_head_image_width"
+            android:layout_height="@dimen/main_forum_head_image_height"
+            android:layout_weight="1"
+            android:src="@drawable/accountmanage" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/head_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/head_image" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="1"
+            android:text="@string/newestreply"
+            android:textSize="@dimen/main_forum_head_text_size" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/newestpublish"
+            android:textSize="@dimen/main_forum_head_text_size" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/todayhot"
+            android:textSize="@dimen/main_forum_head_text_size" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/accountmanage"
+            android:textSize="@dimen/main_forum_head_text_size" />
+    </LinearLayout>
+
+</LinearLayout>
