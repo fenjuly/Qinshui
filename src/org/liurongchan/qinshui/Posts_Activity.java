@@ -15,6 +15,7 @@ import org.liurongchan.model.Post;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -53,8 +54,10 @@ public class Posts_Activity extends Activity {
 
 	private boolean isloadmaxpage = false;
 	private boolean isfirstrefresh = false;
+	
+	private ProgressDialog progressDialog;
 
-	String url;
+	private String url;
 	private static final String ACCOUNT_INFORMATION = "accout_information";
 
 	private static final Map<String, Integer> SECONDARY_CATEGORY = new HashMap<String, Integer>() {
@@ -146,6 +149,7 @@ public class Posts_Activity extends Activity {
 				SECONDARY_CATEGORY.get(category)));
 		url = "http://bbs.stuhome.net/forum.php?mod=forumdisplay&fid=" + id;
 		Posts p = new Posts();
+		progressDialog = ProgressDialog.show(mContext, null, "请稍后");
 		p.execute(url);
 	}
 
@@ -233,6 +237,7 @@ public class Posts_Activity extends Activity {
 			} else {
 				post_Adapter.refresh(forum_posts);
 			}
+			progressDialog.dismiss();
 			page_text.setText("第" + now_page + "页" + ",共" + max_page + "页");
 			super.onPostExecute(result);
 		}
@@ -249,6 +254,7 @@ public class Posts_Activity extends Activity {
 				now_page--;
 				url = url + "&page=" + now_page;
 				Posts p = new Posts();
+				progressDialog = ProgressDialog.show(mContext, null, "请稍后");
 				p.execute(url);
 			}
 		}
@@ -265,6 +271,7 @@ public class Posts_Activity extends Activity {
 				now_page++;
 				url = url + "&page=" + now_page;
 				Posts p = new Posts();
+				progressDialog = ProgressDialog.show(mContext, null, "请稍后");
 				p.execute(url);
 			}
 		}
@@ -308,6 +315,7 @@ public class Posts_Activity extends Activity {
 									now_page = des_page;
 									url = url + "&page=" + des_page;
 									Posts p = new Posts();
+									progressDialog = ProgressDialog.show(mContext, null, "请稍后");
 									p.execute(url);
 								}
 							}

@@ -6,10 +6,11 @@ import java.util.Map;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.Connection.Method;
-import org.liurongchan.model.Post_Item;
+import org.liurongchan.model.ListItem;
 import org.liurongchan.qinshui.R;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -28,12 +29,14 @@ import android.widget.Toast;
 public class Posts_Item_Long_Listener implements OnLongClickListener {
 
 	private Context mContext;
-	private Post_Item post_Item;
+	private ListItem post_Item;
 	private String formhash;
+	
+	private ProgressDialog progressDialog;
 
 	private static final String ACCOUNT_INFORMATION = "accout_information";
 
-	public Posts_Item_Long_Listener(Context mContext, Post_Item post_Item,
+	public Posts_Item_Long_Listener(Context mContext, ListItem post_Item,
 			String formhash) {
 		this.mContext = mContext;
 		this.post_Item = post_Item;
@@ -74,6 +77,7 @@ public class Posts_Item_Long_Listener implements OnLongClickListener {
 							dialog.dismiss();
 							String[] params = { reply_select_url, message };
 							Comment comment = new Comment();
+							progressDialog = ProgressDialog.show(mContext, null, "请稍后");
 							comment.execute(params);
 						}
 					}
@@ -122,6 +126,7 @@ public class Posts_Item_Long_Listener implements OnLongClickListener {
 		@Override
 		protected void onPostExecute(Integer result) {
 			super.onPostExecute(result);
+			progressDialog.dismiss();
 			if (result == 200) {
 				Toast.makeText(mContext, "回复成功!", Toast.LENGTH_SHORT).show();
 			} else {

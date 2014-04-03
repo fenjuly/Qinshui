@@ -13,6 +13,7 @@ import org.jsoup.select.Elements;
 import org.liurongchan.utils.MD5;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,6 +42,8 @@ public class Login_Activity extends Activity {
 	private String username;
 	private String password;
 	
+	private ProgressDialog progressDialog;
+	
 	private static final String ACCOUNT_INFORMATION = "accout_information";
 
 	@Override
@@ -68,6 +71,7 @@ public class Login_Activity extends Activity {
 					MD5 m = new MD5();
 					password = m.getMD5ofStr(password);
 					Login login = new Login();
+					progressDialog = ProgressDialog.show(mContext, null, "请稍后");
 					login.execute();
 				}
 			}
@@ -144,11 +148,13 @@ public class Login_Activity extends Activity {
 		protected void onPostExecute(Boolean result) {
 			super.onPostExecute(result);
 			if(!result) {
+				progressDialog.dismiss();
 				Toast.makeText(mContext, "用户名或密码错误!", Toast.LENGTH_SHORT)
 				.show();
 				usernameText.setText("");
 				passwordText.setText("");
 			} else {
+				progressDialog.dismiss();
 				Toast.makeText(mContext, "登录成功!", Toast.LENGTH_SHORT)
 				.show();
 				Intent intent = new Intent(mContext, Main_Forum_Activity.class);

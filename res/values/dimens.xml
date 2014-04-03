@@ -25,7 +25,8 @@
     <dimen name="dialog_height">50dp</dimen>
 
     <!-- Post Item  size -->
-    <dimen name="post_owner_name">8sp</dimen>
+    <dimen name="post_time">8sp</dimen>
+    <dimen name="post_owner_name">10sp</dimen>
     <dimen name="post_content">12sp</dimen>
     <dimen name="item_padding">3dp</dimen>
 

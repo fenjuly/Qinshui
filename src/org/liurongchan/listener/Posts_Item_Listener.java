@@ -1,7 +1,6 @@
 package org.liurongchan.listener;
 
 import org.liurongchan.qinshui.Post_Content_Activity;
-import org.liurongchan.qinshui.Posts_Activity;
 
 import android.content.Context;
 import android.content.Intent;

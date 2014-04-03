@@ -12,10 +12,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.liurongchan.adapter.Post_Item_Adapter;
+import org.liurongchan.model.ListItem;
 import org.liurongchan.model.Post_Item;
+import org.liurongchan.model.Post_Item_nopic;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -43,7 +46,7 @@ public class Post_Content_Activity extends Activity {
 
 	private ListView post_item_list;
 
-	private List<Post_Item> post_items;
+	private List<ListItem> post_items;
 
 	private ImageView previous_content_page;
 	private ImageView next_content_page;
@@ -61,6 +64,8 @@ public class Post_Content_Activity extends Activity {
 
 	private boolean isloadmaxpage = false;
 	private boolean isfirstrefresh = false;
+	
+	private ProgressDialog progressDialog;
 
 	private static final String ACCOUNT_INFORMATION = "accout_information";
 
@@ -84,10 +89,11 @@ public class Post_Content_Activity extends Activity {
 		now_content_page.setOnClickListener(new OnChoosePageClick());
 		comment.setOnClickListener(new OnCommentClick());
 
-		post_items = new ArrayList<Post_Item>();
+		post_items = new ArrayList<ListItem>();
 		url = "http://bbs.stuhome.net/forum.php?mod=viewthread&tid=" + tid
 				+ "&extra=page%3D1";
 		Post_Items p = new Post_Items();
+		progressDialog = ProgressDialog.show(mContext, null, "请稍后");
 		p.execute(url);
 	}
 
@@ -116,6 +122,7 @@ public class Post_Content_Activity extends Activity {
 				String name;
 				String content;
 				String time;
+				List<String> pics;
 				post_items.clear();
 				Elements plhins = doc.getElementsByClass("plhin");
 				for (Element plhin : plhins) {
@@ -125,7 +132,20 @@ public class Post_Content_Activity extends Activity {
 					Elements t_fs = plhin.getElementsByClass("t_f");
 					content = t_fs.text();
 					time = plhin.getElementById("authorposton" + pid).text();
-					post_items.add(new Post_Item(fid, tid, pid, content, name, time));
+					
+					Elements e_pics = plhin.select("div.mbn.savephotop");
+					pics = new ArrayList<String>();
+					if(e_pics != null) {
+						for (Element e_pic : e_pics) {
+							Elements imgs =  e_pic.getElementsByTag("img");
+							pics.add(imgs.attr("zoomfile"));
+						}
+					}
+					if(pics.size() == 0) {
+						post_items.add(new Post_Item_nopic(fid, tid, pid, content, name, time));
+					} else {
+						post_items.add(new Post_Item(fid, tid, pid, content, name, time, pics));						
+					}
 				}
 
 				if (!isloadmaxpage) {
@@ -189,6 +209,7 @@ public class Post_Content_Activity extends Activity {
 					post_Item_Adapter.refresh(post_items);
 				}
 			}
+			progressDialog.dismiss();
 			now_content_page.setText("第" + now_page + "页" + ",共" + max_page
 					+ "页");
 			super.onPostExecute(result);
@@ -225,6 +246,7 @@ public class Post_Content_Activity extends Activity {
 		@Override
 		protected void onPostExecute(Integer result) {
 			super.onPostExecute(result);
+			progressDialog.dismiss();
 			if (result == 200) {
 				Toast.makeText(mContext, "回复成功!", Toast.LENGTH_SHORT).show();
 			} else {
@@ -244,6 +266,7 @@ public class Post_Content_Activity extends Activity {
 				now_page--;
 				url = url + "&page=" + now_page;
 				Post_Items p = new Post_Items();
+				progressDialog = ProgressDialog.show(mContext, null, "请稍后");
 				p.execute(url);
 			}
 		}
@@ -260,6 +283,7 @@ public class Post_Content_Activity extends Activity {
 				now_page++;
 				url = url + "&page=" + now_page;
 				Post_Items p = new Post_Items();
+				progressDialog = ProgressDialog.show(mContext, null, "请稍后");
 				p.execute(url);
 			}
 		}
@@ -303,6 +327,7 @@ public class Post_Content_Activity extends Activity {
 									now_page = des_page;
 									url = url + "&page=" + des_page;
 									Post_Items p = new Post_Items();
+									progressDialog = ProgressDialog.show(mContext, null, "请稍后");
 									p.execute(url);
 								}
 							}
@@ -358,6 +383,7 @@ public class Post_Content_Activity extends Activity {
 								dialog.dismiss();
 								String[] params = { reply_url, message };
 								Comment comment = new Comment();
+								progressDialog = ProgressDialog.show(mContext, null, "请稍后");
 								comment.execute(params);
 							}
 						}

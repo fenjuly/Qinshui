@@ -1,29 +1,24 @@
 package org.liurongchan.model;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import org.liurongchan.listener.Posts_Item_Long_Listener;
 import org.liurongchan.qinshui.R;
 
-import com.squareup.picasso.Picasso;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 /**
- * @author [FeN]July E-mail: newfenjuly@gmail.com
- * @version 创建时间：2014-4-2 下午2:23:31 类说明
+ * @author [FeN]July  E-mail: newfenjuly@gmail.com
+ * @version 创建时间：2014-4-3 下午5:03:54
+ * 类说明
  */
-public class Post_Item implements ListItem{
+public class Post_Item_nopic implements ListItem {
 
-	public Post_Item(int fid, int tid, int pid, String content, String name, String time, List<String> pics) {
+	public Post_Item_nopic(int fid, int tid, int pid, String content, String name, String time) {
 		super();
 		this.fid = fid;
 		this.tid = tid;
@@ -31,7 +26,6 @@ public class Post_Item implements ListItem{
 		this.content = content;
 		this.name = name;
 		this.time = time;
-		this.pics = pics;
 	}
 
 	public int getFid() {
@@ -82,13 +76,6 @@ public class Post_Item implements ListItem{
 		this.time = time;
 	}
 
-	public List<String> getPics() {
-		return pics;
-	}
-
-	public void setPics(List<String> pics) {
-		this.pics = pics;
-	}
 
 	private int fid;
 
@@ -101,7 +88,6 @@ public class Post_Item implements ListItem{
 	
 	private String time;
 	
-	private List<String>  pics;
 
 	@Override
 	public int getLayout() {
@@ -115,38 +101,18 @@ public class Post_Item implements ListItem{
 		TextView contentText;
 		TextView nameText; 
 		TextView timeText;
-		List<ImageView> img_pics = null;
-		LinearLayout layout = null;
 			convertView =  inflater.inflate(R.layout.post_content_item,
 					parent, false);
 			contentText = (TextView) convertView
 					.findViewById(R.id.post_content);
 			nameText = (TextView) convertView.findViewById(R.id.post_owner_name);
 			timeText = (TextView) convertView.findViewById(R.id.post_time);
-			
 
-		layout = (LinearLayout) convertView.findViewById(R.id.item_layout);
-			ImageView img;
-			img_pics = new ArrayList<ImageView>();
-			LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
-			ll.rightMargin = 15;
-			ll.topMargin = 3;
-			for (int i = 0; i < pics.size(); i++) {
-				img = new ImageView(context);
-				img.setLayoutParams(ll);
-				img_pics.add(img);
-			}
 			
 		timeText.setText(time);
 		nameText.setText(name);
 		contentText.setText(content);
-		if(pics != null) {
-			for (int i= 0; i < pics.size(); i++) {
-				Picasso.with(context).load("http://bbs.stuhome.net/" + pics.get(i))
-				.error(R.drawable.placeholder_fail).into(img_pics.get(i));
-				layout.addView(img_pics.get(i));
-			}
-		}
+	
 		convertView.setOnLongClickListener(new Posts_Item_Long_Listener(context, this, formhash));
 		return convertView;
 	}
