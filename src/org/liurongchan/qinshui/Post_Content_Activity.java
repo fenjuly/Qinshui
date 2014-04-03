@@ -2,6 +2,7 @@ package org.liurongchan.qinshui;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -64,7 +66,7 @@ public class Post_Content_Activity extends Activity {
 
 	private boolean isloadmaxpage = false;
 	private boolean isfirstrefresh = false;
-	
+
 	private ProgressDialog progressDialog;
 
 	private static final String ACCOUNT_INFORMATION = "accout_information";
@@ -106,18 +108,29 @@ public class Post_Content_Activity extends Activity {
 			final SharedPreferences mShared = mContext.getSharedPreferences(
 					ACCOUNT_INFORMATION, Context.MODE_PRIVATE);
 			try {
-				doc = Jsoup.connect(params[0]).userAgent("Mozilla")
-						.timeout(10 * 1000)
-						.cookies((Map<String, String>) mShared.getAll()).get();
-				
+				// doc = Jsoup.connect(params[0]).userAgent("Mozilla")
+				// .timeout(10 * 1000)
+				// .cookies((Map<String, String>) mShared.getAll()).get();
+				Connection.Response res = Jsoup.connect(params[0])
+						.userAgent("Mozilla").timeout(10 * 1000)
+						.cookies((Map<String, String>) mShared.getAll())
+						.method(Method.GET).execute();
+				Iterator<String> iterator = res.cookies().keySet().iterator();
+				Editor editor = mShared.edit();
+				while (iterator.hasNext()) {
+					String key = iterator.next();
+					editor.putString(key, res.cookie(key));
+				}
+				editor.commit();
+
+				doc = res.parse();
 				Elements inputs = doc.getElementsByTag("input");
 				for (Element input : inputs) {
 					if (input.attr("name").equals("formhash")) {
 						formhash = input.attr("value");
 					}
 				}
-				
-				
+
 				int pid;
 				String name;
 				String content;
@@ -132,19 +145,21 @@ public class Post_Content_Activity extends Activity {
 					Elements t_fs = plhin.getElementsByClass("t_f");
 					content = t_fs.text();
 					time = plhin.getElementById("authorposton" + pid).text();
-					
+
 					Elements e_pics = plhin.select("div.mbn.savephotop");
 					pics = new ArrayList<String>();
-					if(e_pics != null) {
+					if (e_pics != null) {
 						for (Element e_pic : e_pics) {
-							Elements imgs =  e_pic.getElementsByTag("img");
+							Elements imgs = e_pic.getElementsByTag("img");
 							pics.add(imgs.attr("zoomfile"));
 						}
 					}
-					if(pics.size() == 0) {
-						post_items.add(new Post_Item_nopic(fid, tid, pid, content, name, time));
+					if (pics.size() == 0) {
+						post_items.add(new Post_Item_nopic(fid, tid, pid,
+								content, name, time));
 					} else {
-						post_items.add(new Post_Item(fid, tid, pid, content, name, time, pics));						
+						post_items.add(new Post_Item(fid, tid, pid, content,
+								name, time, pics));
 					}
 				}
 
@@ -236,6 +251,7 @@ public class Post_Content_Activity extends Activity {
 						.cookies((Map<String, String>) mShared.getAll())
 						.method(Method.POST).execute();
 				System.out.println(res.parse());
+				System.out.println(formhash);
 				statusCode = res.statusCode();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -314,7 +330,10 @@ public class Post_Content_Activity extends Activity {
 						public void onClick(View v) {
 							int des_page;
 							String content = editText.getText().toString();
-							if (!isNumeric(content)) {
+							if (content.equals("")) {
+								Toast.makeText(mContext, "请输入数字！",
+										Toast.LENGTH_SHORT).show();
+							} else if (!isNumeric(content)) {
 								Toast.makeText(mContext, "只能输入数字！",
 										Toast.LENGTH_SHORT).show();
 							} else {
@@ -327,7 +346,8 @@ public class Post_Content_Activity extends Activity {
 									now_page = des_page;
 									url = url + "&page=" + des_page;
 									Post_Items p = new Post_Items();
-									progressDialog = ProgressDialog.show(mContext, null, "请稍后");
+									progressDialog = ProgressDialog.show(
+											mContext, null, "请稍后");
 									p.execute(url);
 								}
 							}
@@ -354,7 +374,7 @@ public class Post_Content_Activity extends Activity {
 					+ fid
 					+ "&extra=page%3D1&tid="
 					+ tid
-					+ "&replysubmit=yes&inajax=1";
+					+ "&replysubmit=yes&handlekey=fastpost&inajax=1";
 
 			final EditText editText = new EditText(mContext);
 			editText.setHeight(mContext.getResources().getDimensionPixelSize(
@@ -381,9 +401,11 @@ public class Post_Content_Activity extends Activity {
 										Toast.LENGTH_SHORT).show();
 							} else {
 								dialog.dismiss();
-								String[] params = { reply_url, message };
-								Comment comment = new Comment();
-								progressDialog = ProgressDialog.show(mContext, null, "请稍后");
+								final String[] params = { reply_url, message };
+								final Comment comment = new Comment();
+								progressDialog = ProgressDialog.show(mContext,
+										null, "请稍后");
+
 								comment.execute(params);
 							}
 						}
