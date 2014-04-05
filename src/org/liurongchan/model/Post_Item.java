@@ -161,9 +161,12 @@ public class Post_Item implements ListItem {
 					
 					img_pics.get(i).setScaleType(ScaleType.CENTER_CROP);
 				} else {
+					ImageTarget target = new ImageTarget(img_pics.get(i));
+					targetList.add(target);
 					Picasso.with(context).load(pics.get(i))
 							.error(R.drawable.placeholder_fail)
-							.into(img_pics.get(i));
+							.into(target);
+					img_pics.get(i).setScaleType(ScaleType.CENTER_CROP);
 				}
 			}
 		}
@@ -222,6 +225,7 @@ public class Post_Item implements ListItem {
 			}
 			bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
 			imageView.setImageBitmap(bitmap);
+			targetList.remove(this);
 		}
 
 		@Override
