@@ -1,5 +1,6 @@
 package org.liurongchan.qinshui;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,12 +18,14 @@ import org.liurongchan.model.ListItem;
 import org.liurongchan.model.Post_Item;
 import org.liurongchan.model.Post_Item_nopic;
 
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -55,6 +58,8 @@ public class Post_Content_Activity extends Activity {
 	private TextView now_content_page;
 	private ImageView comment;
 
+	
+	
 	private Post_Item_Adapter post_Item_Adapter;
 
 	private String url;
@@ -68,6 +73,8 @@ public class Post_Content_Activity extends Activity {
 	private boolean isfirstrefresh = false;
 
 	private ProgressDialog progressDialog;
+	
+	private HttpResponseCache httpResponseCache;
 
 	private static final String ACCOUNT_INFORMATION = "accout_information";
 
@@ -92,6 +99,13 @@ public class Post_Content_Activity extends Activity {
 		comment.setOnClickListener(new OnCommentClick());
 
 		post_items = new ArrayList<ListItem>();
+		try {
+			File httpCacheDir = new File(mContext.getExternalCacheDir(), "http");
+			long httpCacheSize = 20 * 1024 * 1024; // 10 MiB
+			httpResponseCache = HttpResponseCache.install(httpCacheDir, httpCacheSize);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		url = "http://bbs.stuhome.net/forum.php?mod=viewthread&tid=" + tid
 				+ "&extra=page%3D1";
 		Post_Items p = new Post_Items();
@@ -99,6 +113,16 @@ public class Post_Content_Activity extends Activity {
 		p.execute(url);
 	}
 
+	
+	@Override
+	protected void onDestroy() {
+		try {
+			httpResponseCache.delete();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		super.onDestroy();
+	}
 	private class Post_Items extends AsyncTask<String, Void, Boolean> {
 
 		@SuppressWarnings("unchecked")
@@ -146,12 +170,19 @@ public class Post_Content_Activity extends Activity {
 					content = t_fs.text();
 					time = plhin.getElementById("authorposton" + pid).text();
 
-					Elements e_pics = plhin.select("div.mbn.savephotop");
+					Elements e_pics = plhin.getElementsByClass("zoom");
 					pics = new ArrayList<String>();
 					if (e_pics != null) {
 						for (Element e_pic : e_pics) {
-							Elements imgs = e_pic.getElementsByTag("img");
-							pics.add(imgs.attr("zoomfile"));
+							if(e_pic.attr("zoomfile").equals("")) {
+								if(e_pic.attr("file").equals("")) {
+									continue;
+								} else {
+									pics.add(e_pic.attr("file"));
+								}
+							} else {
+								pics.add(e_pic.attr("zoomfile"));
+							}
 						}
 					}
 					if (pics.size() == 0) {

@@ -5,6 +5,7 @@ import java.util.List;
 import org.liurongchan.model.ListItem;
 
 
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ public class Post_Item_Adapter extends BaseAdapter {
 	private String formhash;
 
 	private LayoutInflater mLayoutInflater;
+	
 
 	public Post_Item_Adapter(Context context, List<ListItem> post_items, String formhash) {
 		mContext = context;

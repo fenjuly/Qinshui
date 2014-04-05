@@ -1,5 +1,6 @@
 package org.liurongchan.qinshui;
 
+
 import org.liurongchan.adapter.SecondaryForumCategory_Adapter;
 
 import android.app.Activity;
@@ -21,6 +22,7 @@ public class Secondary_Forum_Activity extends Activity {
 	private String keyword;
 
 	private SecondaryForumCategory_Adapter mAdapter;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,7 @@ public class Secondary_Forum_Activity extends Activity {
 		mListView = (ListView) findViewById(R.id.secondary_forum_list);
 		mAdapter = new SecondaryForumCategory_Adapter(mContext, selectCategories(keyword));
 		mListView.setAdapter(mAdapter);
+		
 	}
 
 	private String[] selectCategories(String fatherCategory) {
