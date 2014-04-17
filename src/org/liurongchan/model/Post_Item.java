@@ -3,6 +3,7 @@ package org.liurongchan.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.liurongchan.listener.ImageView_Listener;
 import org.liurongchan.listener.Posts_Item_Long_Listener;
 import org.liurongchan.qinshui.R;
 
@@ -109,8 +110,7 @@ public class Post_Item implements ListItem {
 	private String time;
 
 	private List<String> pics;
-	
-	
+
 	private ArrayList<ImageTarget> targetList;
 
 	@Override
@@ -125,24 +125,24 @@ public class Post_Item implements ListItem {
 		TextView nameText;
 		TextView timeText;
 		LinearLayout layout;
-		
+
 		List<ImageView> img_pics = new ArrayList<ImageView>();
 
-			convertView = inflater.inflate(R.layout.post_content_item, parent,
-					false);
-			layout = (LinearLayout) convertView.findViewById(R.id.item_layout);
-			ImageView img;
-			LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(
-					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			ll.rightMargin = 15;
-			ll.topMargin = 3;
-			
-			for (int i = 0; i < pics.size(); i++) {
-				img = new ImageView(context);
-				img.setLayoutParams(ll);
-				img_pics.add(img);
-				layout.addView(img);
-			}
+		convertView = inflater.inflate(R.layout.post_content_item, parent,
+				false);
+		layout = (LinearLayout) convertView.findViewById(R.id.item_layout);
+		ImageView img;
+		LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		ll.rightMargin = 15;
+		ll.topMargin = 3;
+
+		for (int i = 0; i < pics.size(); i++) {
+			img = new ImageView(context);
+			img.setLayoutParams(ll);
+			img_pics.add(img);
+			layout.addView(img);
+		}
 		contentText = (TextView) convertView.findViewById(R.id.post_content);
 		nameText = (TextView) convertView.findViewById(R.id.post_owner_name);
 		timeText = (TextView) convertView.findViewById(R.id.post_time);
@@ -154,19 +154,24 @@ public class Post_Item implements ListItem {
 			for (int i = 0; i < pics.size(); i++) {
 				if (pics.get(i).startsWith("data")) {
 					ImageTarget target = new ImageTarget(img_pics.get(i));
-					targetList.add(target); //hold a strong reference to target
+					targetList.add(target); // hold a strong reference to target
 					Picasso.with(context)
 							.load("http://bbs.stuhome.net/" + pics.get(i))
 							.into(target);
-					
+
 					img_pics.get(i).setScaleType(ScaleType.CENTER_CROP);
+					img_pics.get(i).setOnClickListener(
+							new ImageView_Listener(context,
+									"http://bbs.stuhome.net/" + pics.get(i)));
 				} else {
 					ImageTarget target = new ImageTarget(img_pics.get(i));
 					targetList.add(target);
 					Picasso.with(context).load(pics.get(i))
-							.error(R.drawable.placeholder_fail)
-							.into(target);
+							.error(R.drawable.placeholder_fail).into(target);
 					img_pics.get(i).setScaleType(ScaleType.CENTER_CROP);
+					img_pics.get(i).setOnClickListener(
+							new ImageView_Listener(context,
+									"http://bbs.stuhome.net/" + pics.get(i)));
 				}
 			}
 		}
@@ -176,27 +181,28 @@ public class Post_Item implements ListItem {
 		return convertView;
 	}
 
-	
-//	this class is to resize the imageview when the bitmap too large to be loaded , but there are some problems that i haven't solve
-//	 my original idea id like this :
+	// this class is to resize the imageview when the bitmap too large to be
+	// loaded , but there are some problems that i haven't solve
+	// my original idea id like this :
 
-//	     Picasso.with(context).load(pics.get(i))
-//	      .error(R.drawable.placeholder_fail)
-//	      .into(new ImageTarge(img_pics.get(i)));
-//	
-//	
-// the problem i found is when i invoke	the code, only onPrepareLoad method are executed . not until  i slide the screen the onBitmapLoaded are executed.
-	
-	
-	//i have solved the problem .see : https://github.com/square/picasso/issues/251
-	
+	// Picasso.with(context).load(pics.get(i))
+	// .error(R.drawable.placeholder_fail)
+	// .into(new ImageTarge(img_pics.get(i)));
+	//
+	//
+	// the problem i found is when i invoke the code, only onPrepareLoad method
+	// are executed . not until i slide the screen the onBitmapLoaded are
+	// executed.
+
+	// i have solved the problem .see :
+	// https://github.com/square/picasso/issues/251
+
 	private class ImageTarget implements Target {
 
-		
 		private int width = 0;
 		private int height = 0;
 		private float ratio;
-		
+
 		private ImageView imageView;
 
 		public ImageTarget(ImageView imageView) {

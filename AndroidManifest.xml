@@ -31,6 +31,8 @@
         <activity android:name="org.liurongchan.qinshui.Login_Activity" />
         <activity android:name="org.liurongchan.qinshui.Posts_Activity" />
         <activity android:name="org.liurongchan.qinshui.Post_Content_Activity" />
+         <activity android:name="org.liurongchan.qinshui.ImageViewActivity" />
+        ImageViewActivity
     </application>
 
 </manifest>
