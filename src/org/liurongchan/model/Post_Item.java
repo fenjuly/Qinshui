@@ -112,6 +112,8 @@ public class Post_Item implements ListItem {
 	private List<String> pics;
 
 	private ArrayList<ImageTarget> targetList;
+	
+	private static List<ImageView> img_pics = new ArrayList<ImageView>();
 
 	@Override
 	public int getLayout() {
@@ -126,17 +128,17 @@ public class Post_Item implements ListItem {
 		TextView timeText;
 		LinearLayout layout;
 
-		List<ImageView> img_pics = new ArrayList<ImageView>();
-
-		convertView = inflater.inflate(R.layout.post_content_item, parent,
-				false);
+		if(convertView == null) {
+			convertView = inflater.inflate(R.layout.post_content_item, parent,
+					false);
+		}
 		layout = (LinearLayout) convertView.findViewById(R.id.item_layout);
 		ImageView img;
 		LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		ll.rightMargin = 15;
 		ll.topMargin = 3;
-
+		img_pics.clear();
 		for (int i = 0; i < pics.size(); i++) {
 			img = new ImageView(context);
 			img.setLayoutParams(ll);
@@ -153,25 +155,24 @@ public class Post_Item implements ListItem {
 		if (pics != null) {
 			for (int i = 0; i < pics.size(); i++) {
 				if (pics.get(i).startsWith("data")) {
-					ImageTarget target = new ImageTarget(img_pics.get(i));
-					targetList.add(target); // hold a strong reference to target
+//					ImageTarget target = new ImageTarget(img_pics.get(i));
+//					targetList.add(target); // hold a strong reference to target
 					Picasso.with(context)
-							.load("http://bbs.stuhome.net/" + pics.get(i))
-							.into(target);
+							.load("http://bbs.stuhome.net/" + pics.get(i)).resize(150, 150)
+							.into(img_pics.get(i));
 
 					img_pics.get(i).setScaleType(ScaleType.CENTER_CROP);
 					img_pics.get(i).setOnClickListener(
 							new ImageView_Listener(context,
 									"http://bbs.stuhome.net/" + pics.get(i)));
 				} else {
-					ImageTarget target = new ImageTarget(img_pics.get(i));
-					targetList.add(target);
+//					ImageTarget target = new ImageTarget(img_pics.get(i));
+//					targetList.add(target);
 					Picasso.with(context).load(pics.get(i))
-							.error(R.drawable.placeholder_fail).into(target);
+							.error(R.drawable.placeholder_fail).resize(100, 100).into(img_pics.get(i));
 					img_pics.get(i).setScaleType(ScaleType.CENTER_CROP);
 					img_pics.get(i).setOnClickListener(
-							new ImageView_Listener(context,
-									"http://bbs.stuhome.net/" + pics.get(i)));
+							new ImageView_Listener(context, pics.get(i)));
 				}
 			}
 		}
@@ -196,6 +197,10 @@ public class Post_Item implements ListItem {
 
 	// i have solved the problem .see :
 	// https://github.com/square/picasso/issues/251
+	
+	
+	//-------------------------------------------------------4.18
+	//this solution is discarded ,but i don't wanna delete it
 
 	private class ImageTarget implements Target {
 
@@ -243,4 +248,6 @@ public class Post_Item implements ListItem {
 		}
 
 	}
+	
+
 }

@@ -16,7 +16,10 @@
         android:allowBackup="true"
         android:icon="@drawable/qinshui"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme" 
+        android:hardwareAccelerated="false"
+        >
+        
         <activity
             android:name="org.liurongchan.qinshui.Load_Activity"
             android:label="@string/app_name" >

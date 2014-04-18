@@ -123,6 +123,15 @@ public class Post_Content_Activity extends Activity {
 		}
 		super.onDestroy();
 	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+	     HttpResponseCache cache = HttpResponseCache.getInstalled();
+	       if (cache != null) {
+	           cache.flush();
+	       }
+	}
 	private class Post_Items extends AsyncTask<String, Void, Boolean> {
 
 		@SuppressWarnings("unchecked")
